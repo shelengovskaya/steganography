@@ -170,9 +170,60 @@ IMAGE_WITH_WATERMARK_DIR = 'image_with_watermark/'
 WATERMARK_DIR = 'watermark/'
 EXTRACTED_WATERMARK = 'extracted_watermark/'
 
+# -------- estimation ---------------
+
+from math import log10, sqrt
+from skimage.metrics import structural_similarity as get_ssim
+import warnings
+warnings.filterwarnings("ignore")
+
+def get_mse(original, modified):
+	mse = np.mean((original - modified) ** 2)
+	print('MSE: ', mse)
+	return mse
+
+def get_rmse(original, modified):
+	rmse = sqrt(get_mse(original, modified))
+	print('RMSE:', rmse)
+	return rmse
+
+def get_psnr(original, modified):
+    rmse = get_rmse(original, modified)
+    if (rmse == 0):
+    	return 100
+    max_pixel = 255.0
+    psnr = 20 * log10(max_pixel / rmse)
+    print('PSNR:', psnr)
+    return psnr
+
+def get_estimation(original, modified, watermark):
+	get_psnr(original, modified)
+	# print(type(original))
+	# print(type(modified))
+	ssim = get_ssim(original, modified)
+	print('SSIM: ', ssim)
+	get_ec(watermark, original)
+
+def get_ec(watermark, original):
+	original_size = original.shape
+	watermark_size = watermark.shape
+
+	ec = (watermark_size[0]*watermark_size[1]*8) / (original_size[0]*original_size[1])
+	print('EC:', ec)
+
+
+# add NCC
+
+
+# def get_ssim(original, modified):
+# 	ssim = get_ssim(original, modified)
+# 	print("SSIM: {}".format(ssim))
+
+# --------------------------------------
+
 
 def main():
-	test_number = '3'
+	test_number = '4'
 	input_file = 'image{}.jpg'.format(test_number)
 	output_file = 'image{}_with_watermark{}.jpg'.format(test_number, test_number)
 	watermark_file = 'watermark{}.jpg'.format(test_number)
@@ -199,6 +250,8 @@ def main():
 
 	Image.fromarray(result_message.astype('uint8')).save(EXTRACTED_WATERMARK+extracted_watermark_file)
 	print('Extracted watermark:', EXTRACTED_WATERMARK+extracted_watermark_file)
+
+	get_estimation(image, result_image, watermark)
 
 
 if __name__=='__main__':
