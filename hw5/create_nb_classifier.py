@@ -7,10 +7,7 @@ import joblib
 
 
 def create_nb_classifier(joblib_file):
-    '''
-        Train Naive Bayes classifier with training set (feature vectors) from csv file,
-        and load the trained model in .joblib file
-    '''    
+
     classifier = naive_bayes.GaussianNB()
     classifier.fit(x_train, y_train) # fit svm classifier to the train data
     y_prediction = classifier.predict(x_test)

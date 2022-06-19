@@ -8,21 +8,12 @@ from sklearn import preprocessing
 import pandas as pd
 import os
 
-
-
 import warnings
 warnings.filterwarnings("ignore")
 
 
-
 def stego_or_clean(img_path, classifier):
-    '''
-        This function returns the type of the image: either clean or stego, using the chosen classifier
-        IMPORTANT: 
-            - There's a chance of misclassification in case of non-monochromatic/high-resolution images,
-            - The model detects only LSB Steganography
-        This limitation is due to the training dataset, which does not provide a wide range of images.
-    '''
+
     im = cv2.imread(img_path)
     vals = im.mean(axis=2).flatten()
     # plot histogram with 255 bins
@@ -51,6 +42,6 @@ def stego_or_clean(img_path, classifier):
 
 
 nb_classifier = joblib.load('nb_classifier.joblib')
-image_path = 'image3_with_watermark3.jpg'
+image_path = 'images/image3_with_watermark3.jpg'
 result = stego_or_clean(image_path, nb_classifier)
 print(result)
